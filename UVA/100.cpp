@@ -23,23 +23,36 @@ typedef vector<int> vi;
 typedef pair<int,int> pii;
 typedef vector<pii> vpii;
 
-int store[1000000];
+int store[2000000];
 
-int getN(int n) {
-  //printf("%d\n",n);
+int getN(ll n) {
+  printf("%d\n",n);
+  int ans;
   if(store[n]!=0) return store[n];
   else if(n==1) return 1;
-  else if(n%2==0) return store[n]=getN(n/2)+1;
-  else return store[n]=getN(3*n+1)+1;
+  else if(n%2==0) {
+    ans = getN(n>>1)+1;
+    if(n <= 1999999 && n > 0) store[n] = ans;
+    return ans; 
+  }
+  else  {
+    ans = getN((3*n+1)>>1)+2;
+    if(n <= 1999999 && n > 0) store[n] = ans;
+    return ans;
+  }
 }
 
 int main() {
   //printf("num: %d\n",getN(22)); 
   int i,j;
+  int xI, xJ;
   int mx;
   while(scanf("%d %d",&i,&j)!=-1) {
     mx = 0;
-    FOR(x,i,j) {
+    if(i>j) { xI = j; xJ=i; }
+    else {xI = i; xJ = j;};
+    FORD(x,xJ,xI) {
+      printf("%d: %d\n",x,getN(x));
       mx = max(mx,getN(x));
     }
     printf("%d %d %d\n",i,j,mx);
