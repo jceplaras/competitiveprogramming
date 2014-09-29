@@ -26,9 +26,9 @@ typedef vector<pii> vpii;
 int store[2000000];
 
 int getN(ll n) {
-  printf("%d\n",n);
+  //printf("%d\n",n);
   int ans;
-  if(store[n]!=0) return store[n];
+  if( n < 2000000 && n > 0)if(store[n]!=0) return store[n];
   else if(n==1) return 1;
   else if(n%2==0) {
     ans = getN(n>>1)+1;
@@ -52,7 +52,7 @@ int main() {
     if(i>j) { xI = j; xJ=i; }
     else {xI = i; xJ = j;};
     FORD(x,xJ,xI) {
-      printf("%d: %d\n",x,getN(x));
+      //printf("%d: %d\n",x,getN(x));
       mx = max(mx,getN(x));
     }
     printf("%d %d %d\n",i,j,mx);
