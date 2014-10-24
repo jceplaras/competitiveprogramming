@@ -54,6 +54,8 @@ int main() {
     }
 
     //output phase
+    if(num != 1)
+     printf("\n"); 
     printf("Field #%d:\n",num++);
     FOR(i,1,R) {
       FOR(j,1,C) {
@@ -64,7 +66,11 @@ int main() {
       }
       printf("\n");
     }
-    printf("\n");
+
+    FOR(i,0,R+1) 
+      FOR(j,0,C+1) 
+        OUT[i][j] = 0;
+
 
   }
   return 0;
