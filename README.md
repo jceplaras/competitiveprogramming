@@ -8,8 +8,9 @@ Online Judges
 -----------
 
 * [Codechef] - submissions are inside __Codechef__ folder. The filename correspond to the problem code solved.
-* [Programming Challenges] - solution to [UVA Online judge] problems in Steven Skeina's book.
+* [UVA Online judge] - solution to problems in Steven Skeina's book [Programming Challenges] and Steven Halim's book.
 * [Hacker Rank] - submission to problems to Hacker Rank, each domain solutions separated in one directory
+* [Kattis] - submissions to problems in Kattis online judge
 
 
 Programming languages
@@ -22,3 +23,4 @@ Programming languages
 [Programming Challenges]:http://en.wikipedia.org/wiki/Programming_Challenges_(book)
 [UVA Online judge]:http://uva.onlinejudge.org/
 [Hacker Rank]:https://www.hackerrank.com
+[Kattis]:http://open.kattis.com
