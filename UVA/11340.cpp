@@ -25,31 +25,43 @@ typedef vector<pii> vpii;
 
 int main() {
   int T;
-  scanf("%d",&T);
-  int K,M;
-  int cost[300];
+  int K;
+  int M;
+  int cost[256];
   char c;
-  char temp[20000];
-  ull sum=0;
-  FORN(i,300)
-    cost[i] =0;
-  while(T--) {
-    scanf("%d",&K);
-    while(K--) {
-      scanf("%s ",temp);
-      scanf("%d",&cost[temp[0]]);
-    }
-    scanf("%d",&M);
+  int val;
 
-    printf("TEST %d\n",M);
-    while(M--) {
-      scanf("%[^\n]",temp);
-      FORN(i,strlen(temp)) {
-        sum+=cost[temp[i]];
+  char line[20000];
+  scanf("%d",&T);
+  while(T--) {
+
+    FORN(i,256)
+      cost[i] = 0;
+
+    scanf("%d",&K);
+    FORN(i,K) {
+      scanf("%s",line);
+      scanf("%d",&val);
+      c = line[0];
+      cost[c] = val;
+    }
+
+    /*FORN(i,256) {
+      printf("%c = %d\n",i,cost[i]);
+    }*/
+    scanf("%d\n",&M);
+    ull finalVal = 0;
+    FORN(i,M) {
+    fgets(line,20000,stdin);
+      //printf("%s\n",line);
+      FORN(j,strlen(line)) {
+        if(line[j] >= 0 && line[j] <= 255)
+        finalVal += cost[line[j]];
       }
     }
-    printf("%llu.%llu\n",sum/100,sum%100);
-  } 
-  
+    printf("%llu.%02llu$\n",finalVal/100,finalVal%100);
+
+
+  }
   return 0;
 }
