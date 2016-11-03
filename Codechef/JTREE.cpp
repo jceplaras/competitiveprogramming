@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cctype>
+#include <climits>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
@@ -20,22 +21,22 @@ using namespace std;
 typedef long long ll;
 typedef unsigned long long ull;
 typedef vector<int> vi;
-typedef pair<int,int> pii;
-typedef vector<pii> vpii;
+typedef vector<ull> vull;
 
-#define MAXN 100
+#define MAXN 3*100001
 
-T tree[MAXN];
 template<class T,class V>
 class SegmentTree {
 
-  private:
+private:
+  //tree rooted at index 1
+  T tree[MAXN];
   int size;
   int treeSize;
 
 
   V merge(T leftVal, T rightVal) {
-    //TODO
+    return min(leftVal,rightVal);
   }
   void build(T orig[],int t,int l, int h) {
     if(l == h) {
@@ -54,14 +55,18 @@ class SegmentTree {
   V query(int t,int left, int right, int l, int h) {
     int mid = (left+right)/2;
 
+    //if exact to interval [l,h]
     if(left == l && right == h) 
       return tree[t];
+    //if interval [l,h] right side of tree
     else if(l > mid) {
       return query(2*t + 1, mid+1, right, l,h); 
     }
+    //if interval [l,h] left side of tree
     else if(h <= mid) {
       return query(2*t, left, mid, l, h);
     }
+    //if interval is spans the middle of the tree
     else {
       T leftVal = query(2*t,left,mid,l,mid);
       T rightVal = query(2*t + 1,mid+1,right,mid+1,h);
@@ -98,7 +103,7 @@ class SegmentTree {
 
     if(e <= mid)
       update(left, l, mid, s, e, value);
-    else if(start > mid)
+    else if(s > mid)
       update(right, mid+1, h, s, e, value);
     else {
       update(left, l, mid, s, mid, value);
@@ -122,6 +127,7 @@ public:
   }
 
   V query(int low, int high) {
+    low = max(0,low);
     return query(1, 0, size-1, low, high); 
   }
 
@@ -135,7 +141,73 @@ public:
 
 };
 
+SegmentTree<ull,ull> st;
+ull maxW = ULLONG_MAX;
+int N,M,Q;
+int a, b;
+int v, k;
+ull w;
+ull minVal[100001];
+vi graph[100001];
+vull storeCost[100001];
+vi storeKeep[100001];
+
+void dfs(int v, int d) {
+  for(int i=0;i<graph[v].size();i++) {
+    int vertex = graph[v][i];
+    ull minReach = maxW;
+
+    for(int s=0;s<storeCost[vertex].size();s++) {
+      minReach = min(minReach,st.query(d-storeKeep[vertex][s],d-1)+storeCost[vertex][s]); 
+    }
+    minVal[vertex] = minReach;
+
+    st.update(d,minReach);
+    dfs(vertex,d+1);
+  }
+}
+
 int main() {
+  FORN(i,100001)
+    minVal[i] = maxW;
+
+  scanf("%d %d",&N,&M);
+
+
+  FORN(i,N-1) {
+    scanf("%d %d",&a,&b);
+    a--;
+    b--;
+
+    graph[b].push_back(a);
+  }
+
+  FORN(i,M) {
+    scanf("%d %d %llu",&v,&k,&w);
+    v--;
+
+    storeCost[v].push_back(w);
+    storeKeep[v].push_back(k);
+  }
+
+  st.build(minVal,N);
+  st.update(0,0);
+  minVal[0] = 0;
+  dfs(0,1);
+  
+  //query
+  int Q;
+  scanf("%d",&Q);
+
+  while(Q--) {
+    int q;
+    scanf("%d",&q);
+
+    printf("%llu\n",minVal[q-1]);
+  }
+
+
+
   
   return 0;
 }

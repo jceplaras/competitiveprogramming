@@ -22,20 +22,38 @@ typedef unsigned long long ull;
 typedef vector<int> vi;
 typedef pair<int,int> pii;
 typedef vector<pii> vpii;
+#define MAXN 200005
+int sieve[1000001];
 
-#define MAXN 100
-
-T tree[MAXN];
+void computeSieve(int N) {
+  FORN(i,N)
+    sieve[i] = i;
+  sieve[0] = 1;
+  sieve[1] = 1;
+  FOR(i,2,sqrt(N)) {
+    if(sieve[i] == i) {
+      for(int j = i*i; j < N; j += i) {
+        if(sieve[j] == j)
+          sieve[j] = i;
+      }
+    }
+  }
+}
+int tree[MAXN];
 template<class T,class V>
 class SegmentTree {
 
-  private:
+private:
+  //tree rooted at index 1
   int size;
   int treeSize;
 
 
   V merge(T leftVal, T rightVal) {
-    //TODO
+    if(sieve[leftVal] > sieve[rightVal])
+      return leftVal;
+    else
+      return rightVal;
   }
   void build(T orig[],int t,int l, int h) {
     if(l == h) {
@@ -54,14 +72,18 @@ class SegmentTree {
   V query(int t,int left, int right, int l, int h) {
     int mid = (left+right)/2;
 
+    //if exact to interval [l,h]
     if(left == l && right == h) 
       return tree[t];
+    //if interval [l,h] right side of tree
     else if(l > mid) {
       return query(2*t + 1, mid+1, right, l,h); 
     }
+    //if interval [l,h] left side of tree
     else if(h <= mid) {
       return query(2*t, left, mid, l, h);
     }
+    //if interval is spans the middle of the tree
     else {
       T leftVal = query(2*t,left,mid,l,mid);
       T rightVal = query(2*t + 1,mid+1,right,mid+1,h);
@@ -71,7 +93,7 @@ class SegmentTree {
   
   void update(int t, int l, int h, int origIndex, T value) {
     if(l == h) {
-      tree[t] = value;
+      tree[t] /= sieve[tree[t]];
       return;
     }
     int left = 2*t;
@@ -88,37 +110,43 @@ class SegmentTree {
 
   void updateRange(int t, int l, int h, int s, int e, T value) {
     if(l == h) {
-      tree[t] = value;
+      tree[t] /= sieve[tree[t]];
       return;
     }
+    if(tree[t] == 1)
+      return;
 
     int left = 2*t;
     int right = 2*t + 1;
     int mid = (l+h)/2;
 
     if(e <= mid)
-      update(left, l, mid, s, e, value);
-    else if(start > mid)
-      update(right, mid+1, h, s, e, value);
+      updateRange(left, l, mid, s, e, value);
+    else if(s > mid)
+      updateRange(right, mid+1, h, s, e, value);
     else {
-      update(left, l, mid, s, mid, value);
-      update(right, mid+1, h, mid+1, e, value); 
+      updateRange(left, l, mid, s, mid, value);
+      updateRange(right, mid+1, h, mid+1, e, value); 
     }
     
     tree[t] = merge(tree[left],tree[right]);
   }
   
 public:
-  void build(T orig[],int size) {
+  SegmentTree(T orig[],int size) {
     this->size = size;
     this->treeSize = getSegmentTreeSize(size);
     build(orig,1,0,size-1);
   }
 
-  static int getSegmentTreeSize(int N) {
-    double size = ceil(log2(N));
-    int sizeInt = (int) size;
-    return 1 << sizeInt;
+  int getSegmentTreeSize(int N) {
+    int size;
+    for(size = 1;size < N; size <<= 1);
+    return size << 1;
+  }
+
+  V get(int a) {
+    return tree[a];
   }
 
   V query(int low, int high) {
@@ -135,7 +163,39 @@ public:
 
 };
 
+
+int A[100001];
+
 int main() {
-  
+
+  computeSieve(1000001);
+
+  int T;
+  scanf("%d",&T);
+
+  while(T--) {
+    int N, M;
+    scanf("%d %d",&N,&M);
+
+    FORN(i,N) {
+      scanf("%d",&A[i]); 
+    }
+    SegmentTree<int,int> st(A,N);
+
+    FORN(i,M) {
+      int T,L,R;
+      scanf("%d %d %d",&T,&L,&R);
+
+      if(T == 0)
+        st.updateRange(L-1,R-1,-1);
+      else {
+        int val = st.query(L-1,R-1);
+        printf("%d ",sieve[val]);
+      }
+    }
+    printf("\n");
+
+
+  }
   return 0;
 }

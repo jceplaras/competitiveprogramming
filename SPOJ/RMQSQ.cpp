@@ -40,6 +40,7 @@ private:
   }
   void build(T orig[],int t,int l, int h) {
     if(l == h) {
+      printf("placing %d to %d\n",l,t);
       tree[t] = orig[l];
       return;
     }
@@ -125,6 +126,7 @@ int main() {
     cin >> arr[i];
 
   SegmentTree<int,int> st(arr,N);
+  printf("size = %d\n",SegmentTree<int,int>::getSegmentTreeSize(N));
 
   int Q;
   cin >> Q;
